@@ -1,55 +1,49 @@
 import os
 import gradio as gr
-from openai import OpenAI
-import re
+import requests
+import json
 
 # Cấu hình
-OPENAI_BASE_URL = "http://localhost:11434/v1"
-OLLAMA_MODEL = 'qwen3:0.6b-q4_K_M'  # Thay đổi model nếu cần
+API_BASE_URL = "http://18.143.77.190"  # API trên EC2
 
 # Khởi tạo client Ollama
-client_ollama = OpenAI(
-    base_url=OPENAI_BASE_URL,
-    api_key='123'
-)
+# client_ollama = OpenAI(
+#     base_url=OPENAI_BASE_URL,
+#     api_key='123'
+# )
 
 def clean_response(text):
     """Loại bỏ phần <think> và chỉ lấy câu trả lời"""
-    # Loại bỏ phần <think>...</think>
-    text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
-    
-    # Loại bỏ các thẻ XML khác nếu có
-    text = re.sub(r'<[^>]+>', '', text)
-    
-    # Loại bỏ khoảng trắng thừa
-    text = text.strip()
-    
-    return text
+    # Không cần regex vì API đã xử lý
+    return text.strip()
 
 def summarize_text(text):
-    """Tóm tắt văn bản bằng Ollama"""
+    """Tóm tắt văn bản bằng API trên EC2"""
     if not text.strip():
         return "Vui lòng nhập nội dung cần tóm tắt"
     
     try:
-        prompt = f"Tóm tắt nội dung tin tức sau:\n\n{text}"
-
-        messages = [
-            {"role": "system", "content": "You are an AI assistant specialized in summarizing full news articles into concise Vietnamese news briefs. For each article, provide a summary of no more than 50 words, focusing only on the most essential information: who, what, where, and why (if applicable). The output must always be a single paragraph news update in Vietnamese, with no line breaks, no bullet points, and no list formatting—just one coherent paragraph."},
-            {"role": "user", "content": prompt}
-        ]
-        
-        response = client_ollama.chat.completions.create(
-            model=OLLAMA_MODEL,
-            messages=messages,
-            temperature=0.3
+        # Gọi API trên EC2 với timeout lớn hơn
+        payload = {"text": text}
+        response = requests.post(
+            f"{API_BASE_URL}/summarize", 
+            json=payload, 
+            timeout=120  # Tăng timeout lên 2 phút
         )
         
-        # Làm sạch response
-        result = clean_response(response.choices[0].message.content)
+        if response.status_code == 200:
+            result = response.json()
+            if result.get("success"):
+                return result.get("summary", "Không có kết quả")
+            else:
+                return f"Lỗi từ API: {result.get('error', 'Không xác định')}"
+        else:
+            return f"Lỗi HTTP {response.status_code}: {response.text}"
         
-        return result
-        
+    except requests.exceptions.Timeout:
+        return "Lỗi: API mất quá nhiều thời gian xử lý. Hãy thử lại với văn bản ngắn hơn."
+    except requests.exceptions.RequestException as e:
+        return f"Lỗi kết nối: {str(e)}"
     except Exception as e:
         return f"Lỗi: {str(e)}"
 

@@ -1,7 +1,5 @@
 gradio
-openai
-fastapi
-uvicorn
+requests
 fastapi
 uvicorn[standard]
 pydantic

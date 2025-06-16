@@ -25,8 +25,14 @@ case "$1" in
         ;;
     update)
         echo "=== Updating Application ==="
-        cd /home/ubuntu/ai-news-api
-        git pull  # Nếu sử dụng git
+        CURRENT_DIR=$(pwd)
+        echo "Updating from directory: $CURRENT_DIR"
+        
+        # Pull updates nếu dùng git
+        if [ -d ".git" ]; then
+            git pull
+        fi
+        
         source venv/bin/activate
         pip install -r requirements.txt
         sudo systemctl restart ai-news-api

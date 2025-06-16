@@ -24,16 +24,24 @@ ssh -i your-key.pem ubuntu@your-ec2-ip
 
 ### Bước 2: Upload files lên EC2
 
+**Tạo thư mục và upload:**
 ```bash
 # Từ máy local, upload toàn bộ project
-scp -i your-key.pem -r . ubuntu@your-ec2-ip:/home/ubuntu/ai-news-api/
+scp -i your-key.pem -r . ubuntu@your-ec2-ip:/home/ubuntu/ai-news-kfsp/
+```
+
+**Hoặc sử dụng git:**
+```bash
+# Trên EC2
+git clone https://github.com/your-username/your-repo.git /home/ubuntu/ai-news-kfsp
+cd /home/ubuntu/ai-news-kfsp
 ```
 
 ### Bước 3: Setup môi trường
 
 ```bash
-# Trên EC2
-cd /home/ubuntu/ai-news-api
+# Trên EC2, vào thư mục project
+cd /home/ubuntu/ai-news-kfsp
 chmod +x *.sh
 
 # Chạy script setup
@@ -130,7 +138,7 @@ sudo systemctl restart nginx
 ## 📁 Cấu trúc files trên EC2
 
 ```
-/home/ubuntu/ai-news-api/
+/home/ubuntu/ai-news-kfsp/
 ├── api.py                 # API chính
 ├── requirements.txt       # Dependencies
 ├── venv/                  # Python virtual environment
