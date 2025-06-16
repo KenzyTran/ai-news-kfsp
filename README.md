@@ -77,7 +77,7 @@ bash start_production.sh
 
 ### Biến môi trường:
 - `OLLAMA_BASE_URL`: URL của Ollama server (mặc định: http://localhost:11434/v1)
-- `OLLAMA_MODEL`: Tên model sử dụng (mặc định: qwen2.5:0.5b)
+- `OLLAMA_MODEL`: Tên model sử dụng (mặc định: qwen3:0.6b-q4_K_M)
 - `OLLAMA_API_KEY`: API key cho Ollama (mặc định: 123)
 - `HOST`: Host bind (mặc định: 0.0.0.0)
 - `PORT`: Port (mặc định: 8000)
@@ -150,7 +150,7 @@ pip install -r requirements.txt
 # Cài đặt và chạy Ollama
 curl -fsSL https://ollama.ai/install.sh | sh
 ollama serve &
-ollama pull qwen2.5:0.5b
+ollama pull qwen3:0.6b-q4_K_M
 
 # Chạy API
 python api.py
