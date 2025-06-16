@@ -1,0 +1,8 @@
+gradio
+openai
+fastapi
+uvicorn
+fastapi
+uvicorn[standard]
+pydantic
+python-multipart
