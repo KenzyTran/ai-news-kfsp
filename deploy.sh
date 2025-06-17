@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# Source utility functions
+source "$(dirname "$0")/utils.sh"
+
 echo "=== Deploying AI News Summarizer ==="
 
 # Detect docker-compose command
@@ -43,16 +46,17 @@ sleep 20
 echo "📥 Pulling qwen3:0.6b-q4_K_M model..."
 docker exec ai-news-ollama ollama pull qwen3:0.6b-q4_K_M
 
+# Auto-detect server IP
+SERVER_IP=$(get_server_ip)
+if [ "$SERVER_IP" = "localhost" ]; then
+    echo "⚠️  Could not detect external server IP, using localhost"
+else
+    echo "🌐 Detected server IP: $SERVER_IP"
+fi
+
 echo "✅ Deployment completed!"
 echo ""
-echo "🌐 Services:"
-echo "   - API: http://103.3.246.206:8000"
-echo "   - API Docs: http://103.3.246.206:8000/docs"
-echo "   - API Health: http://103.3.246.206:8000/health"
-echo "   - Ollama: http://103.3.246.206:11434"
-echo ""
-echo "🧪 Test API:"
-echo "   curl http://103.3.246.206:8000/health"
+show_service_urls
 echo ""
 echo "📊 Check status:"
 echo "   ./manage_docker.sh status"

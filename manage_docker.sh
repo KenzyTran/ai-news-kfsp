@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Source utility functions
+source "$(dirname "$0")/utils.sh"
+
 # Detect docker-compose command
 if command -v docker-compose &> /dev/null; then
     DOCKER_COMPOSE="docker-compose"
@@ -63,18 +66,25 @@ case $1 in
         curl -f http://localhost:11434/api/tags || echo "❌ Ollama check failed"
         echo ""
         echo "🌐 External access URLs:"
-        echo "   - API: http://103.3.246.206:8000"
-        echo "   - API Docs: http://103.3.246.206:8000/docs"
+        show_service_urls
         ;;
     external-test)
         echo "🧪 Testing external access..."
-        echo "Testing API health from external:"
-        curl -f http://103.3.246.206:8000/health || echo "❌ External API health check failed"
+        SERVER_IP=$(get_server_ip)
+        echo "Testing API health from external IP ($SERVER_IP):"
+        curl -f http://$SERVER_IP:8000/health || echo "❌ External API health check failed"
         echo ""
         echo "Testing API summarize from external:"
-        curl -X POST "http://103.3.246.206:8000/summarize" \
+        curl -X POST "http://$SERVER_IP:8000/summarize" \
              -H "Content-Type: application/json" \
              -d '{"text": "Đây là một bài viết tin tức dài về công nghệ AI."}' || echo "❌ External API summarize failed"
+        ;;
+    urls)
+        show_service_urls
+        ;;
+    ip)
+        SERVER_IP=$(get_server_ip)
+        echo "🌐 Current server IP: $SERVER_IP"
         ;;
     pull-model)
         model=${2:-qwen3:0.6b-q4_K_M}
@@ -101,6 +111,8 @@ case $1 in
         echo "  clean              Stop and remove all containers/volumes"
         echo "  test               Test API and Ollama endpoints (internal)"
         echo "  external-test      Test API from external IP"
+        echo "  urls               Show service URLs with current IP"
+        echo "  ip                 Show current server IP"
         echo "  pull-model [model] Pull Ollama model (default: qwen3:0.6b-q4_K_M)"
         echo "  shell [service]    Open shell in container (default: ai-news-api)"
         echo ""
