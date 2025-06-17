@@ -2,11 +2,14 @@
 
 Hướng dẫn deploy API lên EC2 từng bước chi tiết.
 
+> **🔔 Quan trọng:** Nếu bạn **không có quyền sudo**, vui lòng xem hướng dẫn tại [DEPLOY_NO_SUDO.md](./DEPLOY_NO_SUDO.md)
+
 ## 📋 Yêu cầu
 
 - AWS EC2 instance (Ubuntu 22.04 LTS, tối thiểu t2.medium)
 - Security Group mở port: 22 (SSH), 80 (HTTP), 8000 (API)
 - Key pair để SSH
+- **Quyền sudo** (cho cách deploy này)
 
 ## 🔧 Các bước deploy
 
