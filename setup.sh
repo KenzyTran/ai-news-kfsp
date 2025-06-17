@@ -35,11 +35,11 @@ echo "🐳 Docker Compose: $DOCKER_COMPOSE"
 # Create .env file if not exists
 if [ ! -f .env ]; then
     cat > .env << 'EOF'
-# Ollama Configuration
+# Ollama Configuration (Internal Docker network only)
 OLLAMA_BASE_URL=http://ollama:11434/v1
 OLLAMA_MODEL=qwen3:0.6b-q4_K_M
 
-# API Configuration
+# API Configuration (Only exposed port)
 API_HOST=0.0.0.0
 API_PORT=8000
 EOF
@@ -47,3 +47,5 @@ EOF
 fi
 
 echo "🎉 Setup completed! Run './deploy.sh' to start the application."
+echo "📡 API will be available at: http://localhost:8000"
+echo "🔒 Ollama runs internally (not exposed to host)"

@@ -4,8 +4,7 @@ services:
   ollama:
     image: ollama/ollama:latest
     container_name: ai-news-ollama
-    ports:
-      - "11434:11434"
+    # Remove external port exposure - only accessible within Docker network
     volumes:
       - ai_news_ollama_data:/root/.ollama
     environment:

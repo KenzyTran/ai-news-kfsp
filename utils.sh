@@ -46,7 +46,7 @@ show_service_urls() {
     echo "   - API: http://$server_ip:8000"
     echo "   - API Docs: http://$server_ip:8000/docs"
     echo "   - Health Check: http://$server_ip:8000/health"
-    echo "   - Ollama: http://$server_ip:11434"
+    echo "   - Ollama: Internal only (not exposed)"
     echo ""
     echo "🧪 Test commands:"
     echo "   curl http://$server_ip:8000/health"
