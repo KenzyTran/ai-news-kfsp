@@ -4,7 +4,7 @@ Hướng dẫn deploy API lên EC2 từng bước chi tiết.
 
 ## 📋 Yêu cầu
 
-- AWS EC2 instance (Ubuntu 22.04 LTS, tối thiểu t3.small)
+- AWS EC2 instance (Ubuntu 22.04 LTS, tối thiểu t2.medium)
 - Security Group mở port: 22 (SSH), 80 (HTTP), 8000 (API)
 - Key pair để SSH
 
@@ -14,7 +14,7 @@ Hướng dẫn deploy API lên EC2 từng bước chi tiết.
 
 1. **Tạo EC2 Instance:**
    - AMI: Ubuntu 22.04 LTS
-   - Instance type: t3.medium (recommended) hoặc t3.small (minimum)
+   - Instance type: t3.medium (recommended) hoặc t2.medium (minimum)
    - Security Group: Mở port 22, 80, 8000
 
 2. **Connect SSH:**
