@@ -65,7 +65,7 @@ case $1 in
     pull-model)
         model=${2:-qwen3:0.6b-q4_K_M}
         echo "📥 Pulling model: $model"
-        docker exec ollama ollama pull $model
+        docker exec ai-news-ollama ollama pull $model
         ;;
     shell)
         service=${2:-ai-news-api}
@@ -90,8 +90,8 @@ case $1 in
         echo "  shell [service] Open shell in container (default: ai-news-api)"
         echo ""
         echo "Examples:"
-        echo "  $0 logs ai-news-api     # Show API logs"
-        echo "  $0 shell ollama         # Open shell in Ollama container"
-        echo "  $0 pull-model llama2:7b # Pull different model"
+        echo "  $0 logs ai-news-api        # Show API logs"
+        echo "  $0 shell ai-news-ollama    # Open shell in Ollama container"
+        echo "  $0 pull-model llama2:7b    # Pull different model"
         ;;
 esac

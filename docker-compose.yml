@@ -3,11 +3,11 @@ version: '3.8'
 services:
   ollama:
     image: ollama/ollama:latest
-    container_name: ollama
+    container_name: ai-news-ollama
     ports:
       - "11434:11434"
     volumes:
-      - ollama_data:/root/.ollama
+      - ai_news_ollama_data:/root/.ollama
     environment:
       - OLLAMA_HOST=0.0.0.0:11434
     healthcheck:
@@ -18,7 +18,7 @@ services:
       start_period: 30s
     restart: unless-stopped
     networks:
-      - ai-network
+      - ai-news-network
 
   ai-news-api:
     build: .
@@ -41,12 +41,12 @@ services:
       start_period: 10s
     restart: unless-stopped
     networks:
-      - ai-network
+      - ai-news-network
 
 volumes:
-  ollama_data:
+  ai_news_ollama_data:
     driver: local
 
 networks:
-  ai-network:
+  ai-news-network:
     driver: bridge
