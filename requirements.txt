@@ -4,3 +4,6 @@ fastapi
 uvicorn[standard]
 pydantic
 python-multipart
+openai
+beautifulsoup4
+lxml
