@@ -68,6 +68,27 @@ case $1 in
         echo "🌐 External access URLs:"
         show_service_urls
         ;;
+    test-ip)
+        if [ -z "$2" ]; then
+            echo "❌ Please provide IP address"
+            echo "Usage: $0 test-ip <IP_ADDRESS>"
+            exit 1
+        fi
+        TEST_IP="$2"
+        echo "🧪 Testing API on IP: $TEST_IP"
+        echo ""
+        echo "Testing health endpoint:"
+        curl -f http://$TEST_IP:8000/health || echo "❌ Health check failed"
+        echo ""
+        echo "Testing summarize endpoint:"
+        curl -X POST "http://$TEST_IP:8000/summarize" \
+             -H "Content-Type: application/json" \
+             -d '{"text": "Đây là một bài viết tin tức về công nghệ AI cần được tóm tắt."}' || echo "❌ Summarize test failed"
+        echo ""
+        echo "🌐 Full API URLs:"
+        echo "   - API: http://$TEST_IP:8000"
+        echo "   - Docs: http://$TEST_IP:8000/docs"
+        ;;
     external-test)
         echo "🧪 Testing external access..."
         SERVER_IP=$(get_server_ip)
@@ -111,6 +132,7 @@ case $1 in
         echo "  clean              Stop and remove all containers/volumes"
         echo "  test               Test API and Ollama endpoints (internal)"
         echo "  external-test      Test API from external IP"
+        echo "  test-ip <IP>       Test API on specific IP address"
         echo "  urls               Show service URLs with current IP"
         echo "  ip                 Show current server IP"
         echo "  pull-model [model] Pull Ollama model (default: qwen3:0.6b-q4_K_M)"
@@ -120,5 +142,6 @@ case $1 in
         echo "  $0 logs ai-news-api        # Show API logs"
         echo "  $0 shell ai-news-ollama    # Open shell in Ollama container"
         echo "  $0 external-test           # Test from outside server"
+        echo "  $0 test-ip 192.168.1.100   # Test on specific IP"
         ;;
 esac
