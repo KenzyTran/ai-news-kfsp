@@ -61,6 +61,20 @@ case $1 in
         echo ""
         echo "Testing Ollama:"
         curl -f http://localhost:11434/api/tags || echo "❌ Ollama check failed"
+        echo ""
+        echo "🌐 External access URLs:"
+        echo "   - API: http://103.3.246.206:8000"
+        echo "   - API Docs: http://103.3.246.206:8000/docs"
+        ;;
+    external-test)
+        echo "🧪 Testing external access..."
+        echo "Testing API health from external:"
+        curl -f http://103.3.246.206:8000/health || echo "❌ External API health check failed"
+        echo ""
+        echo "Testing API summarize from external:"
+        curl -X POST "http://103.3.246.206:8000/summarize" \
+             -H "Content-Type: application/json" \
+             -d '{"text": "Đây là một bài viết tin tức dài về công nghệ AI."}' || echo "❌ External API summarize failed"
         ;;
     pull-model)
         model=${2:-qwen3:0.6b-q4_K_M}
@@ -78,20 +92,21 @@ case $1 in
         echo "Usage: $0 {command} [options]"
         echo ""
         echo "Commands:"
-        echo "  start          Start all services"
-        echo "  stop           Stop all services"  
-        echo "  restart        Restart all services"
-        echo "  status         Show service status"
-        echo "  logs [service] Show logs (all or specific service)"
-        echo "  build          Rebuild Docker images"
-        echo "  clean          Stop and remove all containers/volumes"
-        echo "  test           Test API and Ollama endpoints"
+        echo "  start              Start all services"
+        echo "  stop               Stop all services"  
+        echo "  restart            Restart all services"
+        echo "  status             Show service status"
+        echo "  logs [service]     Show logs (all or specific service)"
+        echo "  build              Rebuild Docker images"
+        echo "  clean              Stop and remove all containers/volumes"
+        echo "  test               Test API and Ollama endpoints (internal)"
+        echo "  external-test      Test API from external IP"
         echo "  pull-model [model] Pull Ollama model (default: qwen3:0.6b-q4_K_M)"
-        echo "  shell [service] Open shell in container (default: ai-news-api)"
+        echo "  shell [service]    Open shell in container (default: ai-news-api)"
         echo ""
         echo "Examples:"
         echo "  $0 logs ai-news-api        # Show API logs"
         echo "  $0 shell ai-news-ollama    # Open shell in Ollama container"
-        echo "  $0 pull-model llama2:7b    # Pull different model"
+        echo "  $0 external-test           # Test from outside server"
         ;;
 esac
