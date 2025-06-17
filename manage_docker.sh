@@ -39,21 +39,38 @@ case $1 in
             $DOCKER_COMPOSE logs -f
         fi
         ;;
+    build)
+        echo "🔨 Rebuilding services..."
+        $DOCKER_COMPOSE build --no-cache
+        ;;
+    clean)
+        echo "🧹 Cleaning up..."
+        $DOCKER_COMPOSE down -v
+        docker system prune -f
+        echo "✅ Cleanup completed"
+        ;;
     test)
         echo "🧪 Testing services..."
-        echo ""
         echo "Testing API health:"
-        if curl -f http://localhost:8000/health 2>/dev/null; then
-            echo "✅ API health check passed"
-        else
-            echo "❌ API health check failed"
-        fi
+        curl -f http://localhost:8000/health || echo "❌ API health check failed"
         echo ""
         echo "Testing API summarize:"
         curl -X POST "http://localhost:8000/summarize" \
              -H "Content-Type: application/json" \
-             -d '{"text": "Đây là một bài viết tin tức dài về công nghệ AI."}' \
-             2>/dev/null | python3 -m json.tool || echo "❌ Summarize test failed"
+             -d '{"text": "Đây là một bài viết tin tức dài về công nghệ AI. Công nghệ trí tuệ nhân tạo đang phát triển rất nhanh."}' || echo "❌ API summarize failed"
+        echo ""
+        echo "Testing Ollama:"
+        curl -f http://localhost:11434/api/tags || echo "❌ Ollama check failed"
+        ;;
+    pull-model)
+        model=${2:-qwen3:0.6b-q4_K_M}
+        echo "📥 Pulling model: $model"
+        docker exec ollama ollama pull $model
+        ;;
+    shell)
+        service=${2:-ai-news-api}
+        echo "🐚 Opening shell in $service container..."
+        docker exec -it $service /bin/bash
         ;;
     *)
         echo "🔧 AI News Summarizer Management"
@@ -65,46 +82,16 @@ case $1 in
         echo "  stop           Stop all services"  
         echo "  restart        Restart all services"
         echo "  status         Show service status"
-        echo "  logs [service] Show logs"
-        echo "  test           Test API endpoints"
+        echo "  logs [service] Show logs (all or specific service)"
+        echo "  build          Rebuild Docker images"
+        echo "  clean          Stop and remove all containers/volumes"
+        echo "  test           Test API and Ollama endpoints"
+        echo "  pull-model [model] Pull Ollama model (default: qwen3:0.6b-q4_K_M)"
+        echo "  shell [service] Open shell in container (default: ai-news-api)"
         echo ""
         echo "Examples:"
-        echo "  $0 logs ai-news-api"
-        echo "  $0 test"
-        ;;
-esac
-        sudo systemctl restart ollama
-        sudo systemctl restart ai-news-api
-        sudo systemctl restart nginx
-        echo "All services restarted!"
-        ;;
-    update)
-        echo "=== Updating Application ==="
-        CURRENT_DIR=$(pwd)
-        echo "Updating from directory: $CURRENT_DIR"
-        
-        # Pull updates nếu dùng git
-        if [ -d ".git" ]; then
-            git pull
-        fi
-        
-        source venv/bin/activate
-        pip install -r requirements.txt
-        sudo systemctl restart ai-news-api
-        echo "Application updated!"
-        ;;
-    test)
-        echo "=== Testing API ==="
-        curl -X GET http://localhost:8000/health
-        echo ""
-        ;;
-    *)
-        echo "Usage: $0 {status|logs|restart|update|test}"
-        echo ""
-        echo "  status  - Hiển thị trạng thái services"
-        echo "  logs    - Xem logs của API"
-        echo "  restart - Restart tất cả services"
-        echo "  update  - Update application"
-        echo "  test    - Test API local"
+        echo "  $0 logs ai-news-api     # Show API logs"
+        echo "  $0 shell ollama         # Open shell in Ollama container"
+        echo "  $0 pull-model llama2:7b # Pull different model"
         ;;
 esac
