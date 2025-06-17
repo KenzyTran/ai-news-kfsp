@@ -4,7 +4,7 @@ import requests
 import json
 
 # Cấu hình
-API_BASE_URL = "http://18.143.77.190"  # API trên EC2
+API_BASE_URL = "http://52.221.196.205:8000"  # API trên EC2
 
 # Khởi tạo client Ollama
 # client_ollama = OpenAI(
@@ -22,9 +22,8 @@ def summarize_text(text):
     if not text.strip():
         return "Vui lòng nhập nội dung cần tóm tắt"
     
-    try:
-        # Gọi API trên EC2 với timeout lớn hơn
-        payload = {"text": text}
+    try:        # Gọi API trên EC2 với timeout lớn hơn
+        payload = {"text": text}  # API endpoint /summarize nhận "text" parameter
         response = requests.post(
             f"{API_BASE_URL}/summarize", 
             json=payload, 
